@@ -15,10 +15,9 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn import cross_validation
 import ggplot as gp
 
-def load_data():
-    train = pd.read_csv('train.csv')
-    test = pd.read_csv('test.csv')
-    return train,test
+def load_data(url):
+    data = pd.read_csv(url)
+    return data
 
 picsPath = ""
 
@@ -38,10 +37,10 @@ def plotPoints(data, x, y,c):
 
 def split_missing(data):    
     feature_cols_missing= [col for col in data.columns if col  not in ['Hillshade_3pm','Id']]
-    x_train=data[feature_cols_missing][data.Hillshade_3pm!=0]
+    X_train=data[feature_cols_missing][data.Hillshade_3pm!=0]
     y_train=data['Hillshade_3pm'][data.Hillshade_3pm!=0]
-    x_test=data[feature_cols_missing][data.Hillshade_3pm==0]
-    return x_train,y_train,x_test
+    X_test=data[feature_cols_missing][data.Hillshade_3pm==0]
+    return X_train,y_train,X_test
     
 def create_rfg():
     rforest=RandomForestRegressor(n_estimators=100)
@@ -62,7 +61,11 @@ def fill_missing(data):
     rfg.fit(x_train,y_train)
     data.Hillshade_3pm.loc[data.Hillshade_3pm==0]=rfg.predict(x_test)
     
-train,test = load_data()
+def preprocess_data(url):
+    data=load_data(url)
+    fill_missing(data)
+    return data
+train = load_data('train.csv')
 fill_missing(train)    
 
 #def main():   
