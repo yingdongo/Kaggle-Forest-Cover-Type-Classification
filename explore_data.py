@@ -13,20 +13,29 @@ from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn import cross_validation
+import ggplot as gp
 
 def load_data():
     train = pd.read_csv('train.csv')
     test = pd.read_csv('test.csv')
     return train,test
 
-train, test=load_data()
-feature_cols = [col for col in train.columns if col not in train.columns[11:55] and col  not in ['Cover_Type','Id']]
+picsPath = ""
 
-def histogram(data):  
-    train[feature_cols].hist(figsize=(16,12),bins=50)
-    plt.show()
+def plotHist(data, x,c):
+    
+    p = gp.ggplot(gp.aes(x=x,fill=c), data=data)
+    p = p + gp.geom_histogram()
+    p = p + gp.ggtitle("Histogram - %s" % (str(x)))
+    gp.ggsave(p, "%stemp/Histogram-%s.png" % (picsPath, str(x)))
 
-#Looks like there're some missing values for Hillshade at 3 PM where value=0
+
+def plotPoints(data, x, y,c):
+    p = gp.ggplot(gp.aes(x=x, y=y,colour=c), data=data)
+    p = p + gp.geom_point()
+    p = p + gp.ggtitle("Scatter - %s vs. %s" % (str(x), str(y)))
+    gp.ggsave(p, "%stemp/Scatter-%s_vs_%s.png" % (picsPath, str(x), str(y)))
+
 def split_missing(data):    
     feature_cols_missing= [col for col in data.columns if col  not in ['Hillshade_3pm','Id']]
     x_train=data[feature_cols_missing][data.Hillshade_3pm!=0]
@@ -34,18 +43,44 @@ def split_missing(data):
     x_test=data[feature_cols_missing][data.Hillshade_3pm==0]
     return x_train,y_train,x_test
     
-def cv_missing_rf(x_train,y_train):
+def create_rfg():
     rforest=RandomForestRegressor(n_estimators=100)
-    score=cross_validation.cross_val_score(rforest, x_train, y_train, scoring=None, 
-                                           cv=10, n_jobs=1, verbose=0, fit_params=None, score_func=None, 
-                                           pre_dispatch='2*n_jobs')
-    return score
-def cv_gbr(x_train,y_train):
+    return rforest
+def create_gbr():
     gbr=GradientBoostingRegressor(n_estimators=100)
-    score=cross_validation.cross_val_score(gbr, x_train, y_train, scoring=None, 
-                                           cv=10, n_jobs=1, verbose=0, fit_params=None, score_func=None, 
-                                           pre_dispatch='2*n_jobs')
-    return score
-x_train,y_train,x_test=split_missing(test)
+    return gbr
 
-cv_score=cv_missing_rf(x_train,y_train)
+def cv_score(clf,x_train,y_train):
+    score=cross_validation.cross_val_score(clf, x_train, y_train, scoring=None, 
+                                           cv=10, n_jobs=1, verbose=0, fit_params=None, score_func=None, 
+                                           pre_dispatch='2*n_jobs')                                      
+    return score.mean()
+    
+def fill_missing(data):
+    x_train,y_train,x_test=split_missing(data)
+    rfg=create_rfg()
+    rfg.fit(x_train,y_train)
+    data.Hillshade_3pm.loc[data.Hillshade_3pm==0]=rfg.predict(x_test)
+    
+train,test = load_data()
+fill_missing(train)    
+
+#def main():   
+#==============================================================================
+#    cols = [col for col in train.columns if col not in train.columns[11:56] and  col not in ['Id']] 
+#    for col in cols:
+#        plotHist(train, col,xCol)
+#==============================================================================
+
+#==============================================================================
+#     xCol = 'Cover_Type'
+#     yCols = [col for col in train.columns if col not in train.columns[11:56] and col not in ['Id', 'Cover_Type']] 
+#     for i in range(len(yCols)):
+#         for j in range(len(yCols)):
+#             if i!=len(yCols)-1-j:
+#                 plotPoints(train, yCols[i], yCols[len(yCols)-1-j],xCol)
+#==============================================================================
+
+#if __name__ == '__main__':
+#    main()
+

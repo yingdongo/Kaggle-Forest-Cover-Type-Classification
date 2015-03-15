@@ -1,20 +1,71 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Mar 13 10:00:09 2015
+Created on Sat Mar 14 22:55:01 2015
 
 @author: Ying
 """
-from explore_data import load_data
-train, test=load_data()
-feature_cols = [col for col in train.columns if col not in train.columns[11:55] and col  not in ['Cover_Type','Id']]
+from sklearn import ensemble
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+from sklearn import cross_validation
+
+
+
+def load_data():
+    train = pd.read_csv('train.csv')
+    test = pd.read_csv('test.csv')
+    return train,test
+
+def create_rfg():
+    rforest=RandomForestRegressor(n_estimators=100)
+    return rforest
+    
+def fill_missing(data):
+    x_train,y_train,x_test=split_missing(data)
+    rfg=create_rfg()
+    rfg.fit(x_train,y_train)
+    data.Hillshade_3pm.loc[data.Hillshade_3pm==0]=rfg.predict(x_test)
+    
+def split_data(data,cols):
+    X_train=data[cols]
+    y_train=data['Cover_Type']
+    return X_train,y_train
+    
+def split_missing(data):    
+    feature_cols_missing= [col for col in data.columns if col  not in ['Hillshade_3pm','Id']]
+    X_train=data[feature_cols_missing][data.Hillshade_3pm!=0]
+    y_train=data['Hillshade_3pm'][data.Hillshade_3pm!=0]
+    X_test=data[feature_cols_missing][data.Hillshade_3pm==0]
+    return X_train,y_train,X_test
+def create_clf():
+    forest=ensemble.ExtraTreesClassifier(n_estimators=400, criterion='gini', max_depth=None,max_features=None)
+    return forest
+    
+def feature_importances(X_train,y_train):
+    clf=create_clf()
+    clf.fit(X_train,y_train)
+    return pd.DataFrame(clf.feature_importances_,index=X_train.columns).sort([0], ascending=False)
+  
+def cv_score(clf,X_train,y_train):
+    score=cross_validation.cross_val_score(clf, X_train, y_train, scoring=None, 
+                                           cv=10, n_jobs=1, verbose=0, fit_params=None, score_func=None, 
+                                           pre_dispatch='2*n_jobs')
+    return score.mean()
+                                
+def select_feature(data,feature_cols):
+    score=pd.DataFrame()
+    for i in range(5,60):
+        cols=feature_cols[:i]
+        X_train,y_train=split_data(data,cols)
+        score.append([cv_score(create_clf(),X_train,y_train),i])
+        
+train,test=load_data()
 
 def r(x):
     if x+180>360:
         return x-180
     else:
         return x+180
-
-
 def add_feature():
     train['Aspect2']=train.Aspect.map(r)
     test['Aspect2']=test.Aspect.map(r)
@@ -63,3 +114,8 @@ def add_feature():
     for i in range(1,5):
          test['Wilderness_Area']=test['Wilderness_Area']+i*test['Wilderness_Area'+str(i)]
 
+feature_cols= [col for col in train.columns if col  not in ['Cover_type','Id']]
+
+X_train,y_train=split_data(train,feature_cols)
+
+f=feature_importances(X_train,y_train)
