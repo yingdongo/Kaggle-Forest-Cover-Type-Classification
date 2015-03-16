@@ -36,7 +36,7 @@ def select_feature(data,feature_cols):
     f_count=66
     f_start=np.int(np.sqrt(f_count))
     f_range=range(f_start,f_count)
-    score=np.array(np.zeros(f_count)-f_start)
+    score=np.array(np.zeros(f_count-f_start))
     for i in f_range:
         cols=feature_cols[:i]
         X_train,y_train=split_data(data,cols)

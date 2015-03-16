@@ -34,12 +34,12 @@ def add_feature(data):
     data['Fire_minus_Road'] = data['Horizontal_Distance_To_Fire_Points']-data['Horizontal_Distance_To_Roadways']
     
     
-    data['Soil']=0
-    for i in range(1,41):
-        data['Soil']=data['Soil']+i*data['Soil_Type'+str(i)]
+   # data['Soil']=0
+    #for i in range(1,41):
+    #    data['Soil']=data['Soil']+i*data['Soil_Type'+str(i)]
      
     
-    data['Wilderness_Area']=0
-    for i in range(1,5):
-         data['Wilderness_Area']=data['Wilderness_Area']+i*data['Wilderness_Area'+str(i)]
+    #data['Wilderness_Area']=0
+    #for i in range(1,5):
+     #    data['Wilderness_Area']=data['Wilderness_Area']+i*data['Wilderness_Area'+str(i)]
 
