@@ -17,7 +17,11 @@ def load_data(url):
     return data
 
 picsPath = ""
-
+def show_data(data):
+    print data.head(10)
+    #have a look at few top rows
+    print data.describe()
+    #describe() function would provide count, mean, standard deviation (std), min, quartiles and max in its output
 def plotHist(data, x,c):
     
     p = gp.ggplot(gp.aes(x=x,fill=c), data=data)
