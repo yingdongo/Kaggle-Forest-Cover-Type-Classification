@@ -33,7 +33,7 @@ def feature_engineering(data):
      
     data['Fire_minus_Road'] = data['Horizontal_Distance_To_Fire_Points']-data['Horizontal_Distance_To_Roadways']
     
-    
+    return data
    # data['Soil']=0
     #for i in range(1,41):
     #    data['Soil']=data['Soil']+i*data['Soil_Type'+str(i)]

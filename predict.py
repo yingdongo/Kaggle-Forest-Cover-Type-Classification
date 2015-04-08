@@ -31,7 +31,7 @@ def get_clf():
     return clf
     
 def get_basicclf():
-    clf=ensemble.ExtraTreesClassifier()
+    clf=ensemble.ExtraTreesClassifier(n_estimators= 400)
     return clf    
 
 def get_confusion_t(y_test,y_pred):
@@ -121,7 +121,8 @@ def simple_solution(train,test):
     X_test=test[cols]
     test_ids=test['Id']
     score=cv_score(get_basicclf(),X_train,y)
-    print 'simple_solution with model selection:%s'%score
+    print 'simple_solution with model selection:'
+    print score
     y_pred=basicclf_predict(X_train,y,X_test)
     write_result(test_ids,y_pred,'simple_solution.csv')
     
@@ -134,7 +135,8 @@ def preprocess_solution(train,test):
     X_test=test[cols]
     test_ids=test['Id']
     score=cv_score(get_basicclf(),X_train,y)
-    print 'simple_solution:%s'%score
+    print 'preprocess_solution:'
+    print score
     y_pred=basicclf_predict(X_train,y,X_test)
     write_result(test_ids,y_pred,'preprocess_solution.csv')    
     
@@ -149,7 +151,8 @@ def engineering_solution(train,test):
     X_test=test[cols]
     test_ids=test['Id']
     score=cv_score(get_basicclf(),X_train,y)
-    print 'simple_solution:%s'%score
+    print 'engineering_solution:'
+    print score
     y_pred=basicclf_predict(X_train,y,X_test)
     write_result(test_ids,y_pred,'engineering_solution.csv')  
     
@@ -164,7 +167,8 @@ def paramtuing_solution(train,test):
     X_test=test[cols]
     test_ids=test['Id']
     score=cv_score(get_clf(),X_train,y)
-    print 'simple_solution:%s'%score
+    print 'paramtuing_solution:'
+    print score
     y_pred=clf_predict(X_train,y,X_test)
     write_result(test_ids,y_pred,'paramtuing_solution.csv')    
     
@@ -181,7 +185,8 @@ def selection_solution(train,test):
     X_test=test[feature_cols]
     test_ids=test['Id']
     score=cv_score(get_clf(),X_train,y)
-    print 'simple_solution:%s'%score
+    print 'selection_solution:'
+    print score
     y_pred=clf_predict(X_train,y,X_test)
     write_result(test_ids,y_pred,'selection_solution.csv')    
     
@@ -196,11 +201,11 @@ def algorithm_solution():
 def main():
     train=load_data('train.csv')
     test=load_data('test.csv')
-    simple_solution(train,test)
-    preprocess_solution(train,test)
-    engineering_solution(train,test)
-    paramtuing_solution(train,test)
-    selection_solution(train,test)
+    #simple_solution(train.copy(),test.copy())
+    #preprocess_solution(train.copy(),test.copy())
+    #engineering_solution(train.copy(),test.copy())
+    #paramtuing_solution(train.copy(),test.copy())
+    #selection_solution(train.copy(),test.copy())
     algorithm_solution()
     
 if __name__ == '__main__':
