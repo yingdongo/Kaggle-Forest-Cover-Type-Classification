@@ -19,8 +19,9 @@ def get_clfs():
                     'max_features': ['sqrt', 'log2', .1, .3, None ],
                 }
             },
-#0.810515873016
-#{'max_features': 0.1, 'n_estimators': 500}
+#0.821825396825
+#{'max_features': 0.3, 'n_estimators': 500}
+
             'random forests' : { 
                 'est' :ensemble.RandomForestClassifier(),
                 'grid' : {
@@ -30,8 +31,8 @@ def get_clfs():
             },
         }
 
-#0.820899470899
-#{'max_features': 0.3, 'n_estimators': 1000}
+#0.810251322751
+#{'max_features': 'sqrt', 'n_estimators': 500}
 def grid_search(X_train,y,clfs):
     for name, clf in clfs.iteritems(): 
         clf = GridSearchCV(clfs[name]['est'], clfs[name]['grid'], n_jobs=16, verbose=0, cv=10)

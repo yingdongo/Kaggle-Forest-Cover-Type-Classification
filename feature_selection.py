@@ -6,17 +6,14 @@ Created on Sat Mar 14 22:55:01 2015
 """
 from sklearn import ensemble
 import pandas as pd
-from sklearn import cross_validation
-from feature_engineering import add_feature
-from explore_data import preprocess_data
+from tools import load_data
+from tools import cv_score
+from tools import split_data
+from feature_engineering import feature_engineering
+from data_preprocess import preprocess_data
 from matplotlib import pyplot as plt
 import numpy as np
 
-def split_data(data,cols):
-    X=data[cols]
-    y=data['Cover_Type']
-    return X,y
-    
 def create_clf():
     forest=ensemble.RandomForestClassifier()
     return forest
@@ -26,11 +23,6 @@ def feature_importances(X_train,y_train):
     clf.fit(X_train,y_train)
     return clf.feature_importances_
   
-def cv_score(clf,X_train,y_train):
-    score=cross_validation.cross_val_score(clf, X_train, y_train, scoring=None, 
-                                           cv=10, n_jobs=1, verbose=0, fit_params=None, score_func=None, 
-                                           pre_dispatch='2*n_jobs')
-    return score.mean()
 
                                 
 def select_feature(data,feature_cols,importances):
@@ -68,8 +60,9 @@ def get_features(X_train,y_train):
     return cols[:54]
 
 def main():
-    train=preprocess_data('train.csv')
-    add_feature(train)
+    train=load_data('train.csv')
+    preprocess_data(train)
+    feature_engineering(train)
     feature_cols= [col for col in train.columns if col  not in ['Cover_Type','Id']]
     X_train,y_train=split_data(train,feature_cols)
     importances=feature_importances(X_train,y_train)
@@ -82,5 +75,5 @@ def main():
     plt.show()
 
 
-#if __name__ == '__main__':
-    #main()
+if __name__ == '__main__':
+    main()

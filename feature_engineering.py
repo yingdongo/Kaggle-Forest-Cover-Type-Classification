@@ -12,7 +12,7 @@ def r(x):
         return x+180
 
 
-def add_feature(data):
+def feature_engineering(data):
     data['Aspect2']=data.Aspect.map(r)
     
     data['Ele_minus_VDtHyd'] = data.Elevation-data.Vertical_Distance_To_Hydrology
