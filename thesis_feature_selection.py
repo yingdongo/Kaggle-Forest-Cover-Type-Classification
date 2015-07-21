@@ -13,6 +13,8 @@ from tools import split_data
 from data_preprocess import preprocess_data
 from matplotlib import pyplot as plt
 import numpy as np
+import seaborn as sns
+
 plt.style.use('ggplot')
 
 def feature_engineering(data):
@@ -59,13 +61,17 @@ def plot_importances(importances, col_array):
     #Mean Feature Importance
     print "\nMean Feature Importance %.6f" %np.mean(importances)    
     #Plot the feature importances of the forest
-    plt.figure(figsize=(20,8))
-    plt.title("Feature importances")
-    plt.bar(range(len(importances)), importances[indices],
-            color="gr", align="center")
-    plt.xticks(range(len(importances)), col_array[indices], fontsize=14, rotation=90)
-    plt.xlim([-1, len(importances)])
-    plt.show()
+    #plt.figure(figsize=(20,8))
+    
+    #plt.title("Feature importances")
+    #plt.bar(range(len(importances)), importances[indices],color="gr", align="center")
+    #plt.xticks(range(len(importances)), col_array[indices], fontsize=14, rotation=90)
+    #plt.xlim([-1, len(importances)])
+    
+    #plt.show()
+    sns.barplot(x=col_array[indices],y=importances[indices])
+    plt.xticks(rotation=90,fontsize=14)
+    plt.yticks(fontsize=13)
 
 def select_feature(data,feature_cols,importances):
     indices = np.argsort(importances)[::-1]    
