@@ -48,6 +48,8 @@ def main():
     plt.xticks(fontsize=13)
     plt.yticks(fontsize=13)
     plt.xlabel('Elevation',fontsize=16)
+    plt.ylabel('Frequency',fontsize=16)
+
     #g = sns.FacetGrid(data=train, hue='Cover_Type', hue_order=[1,2,3,4,5,6,7],size = 8)
     #g.map(sns.distplot, 'Elevation', hist_kws={'histtype':'step','stacked':True,'fill':True})
     #g.add_legend(fontsize=14)
