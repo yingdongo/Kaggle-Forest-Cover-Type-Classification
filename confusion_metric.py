@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Apr 30 20:47:10 2015
-
-@author: Ying
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Tue Mar  3 15:55:49 2015
 
 @author: Ying
